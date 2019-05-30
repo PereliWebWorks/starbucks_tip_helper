@@ -16,4 +16,16 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.on('/').render('welcome')
+Route.on('/').render('welcome');
+
+Route
+  .get('users/:id', 'UserController.show')
+  .middleware('auth')
+
+Route.post('login', 'UserController.login')
+
+
+Route
+	.resource('employees', 'EmployeesController')
+	.apiOnly()
+	.middleware('auth');
