@@ -1,19 +1,46 @@
 'use strict'
 
+const User = use('App/Models/User');
+const Hash = use('Hash');
+
 class UserController {
 
-  async login ({ request, auth }) {
-    const { email, password } = request.all()
-    await auth.attempt(email, password)
-
-    return 'Logged in successfully'
+  async login ({ request, response, auth }) {
+    try {
+      const { username, password } = request.all();
+      await auth.attempt(username, password)
+      response.json(true);
+    }
+    catch (error){
+      console.log(error);
+      response.json(false);
+    }
   }
 
-  show ({ auth, params }) {
-    if (auth.user.id !== Number(params.id)) {
-      return 'You cannot see someone else\'s profile'
+  async logout({response, auth}) {
+    try {
+      await auth.logout();
     }
-    return auth.user
+    catch (error){
+      console.log(error);
+    }
+    response.route('login');
+  }
+
+  async store({request, response, auth}) {
+    try {
+    	const user = new User();
+      const { username, password } = request.all();
+    	user.username = username;
+    	user.password = password; //Password will be hashed
+    	await user.save();
+      await auth.attempt(username, password);
+      response.json(true);
+    }
+    catch(error){
+      console.log(error);
+      response.json(false);
+    }
   }
 }
 

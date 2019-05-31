@@ -1,31 +1,34 @@
 'use strict'
 
-/*
-|--------------------------------------------------------------------------
-| Routes
-|--------------------------------------------------------------------------
-|
-| Http routes are entry points to your web application. You can create
-| routes for different URL's and bind Controller actions to them.
-|
-| A complete guide on routing is available here.
-| http://adonisjs.com/docs/4.1/routing
-|
-*/
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+const Helpers = use('Helpers');
 
-Route.on('/').render('welcome');
+//Log in screen
+Route.get('login', ({response}) => {
+	response.download(Helpers.publicPath('login.html'));
+}).middleware(['guest']);
 
-Route
-  .get('users/:id', 'UserController.show')
-  .middleware('auth')
+//Log in
+Route.post('login', 'UserController.login').middleware(['guest']).as('login');
+//Log out
+Route.route('logout', 'UserController.logout').middleware(['auth']);
 
-Route.post('login', 'UserController.login')
 
+//Register
+Route.resource('users', 'UserController').only(['store']).middleware(['guest']);
 
+//Get profile info
+Route.resource('users', 'UserController').only(['show', 'destroy']).middleware(['auth']);
+
+//CRUD for employees
 Route
 	.resource('employees', 'EmployeesController')
 	.apiOnly()
-	.middleware('auth');
+	.middleware(['auth']);
+
+//Main page
+Route.get('/', ({response}) => {
+	response.download(Helpers.publicPath('main.html'));
+}).middleware(['auth']).as('main');

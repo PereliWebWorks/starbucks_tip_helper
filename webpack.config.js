@@ -4,12 +4,15 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const pages = ['main', 'login'];
-var entry = {};
+var entry = {
+  polyfill: '@babel/polyfill'
+};
 pages.forEach(p => entry[p] = path.resolve(__dirname, `src/${p}.js`));
 
 module.exports = {
   entry,
   mode: 'development',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -63,6 +66,6 @@ module.exports = {
   ],
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'public')
+    path: path.resolve(__dirname, 'public'),
   }
 };
