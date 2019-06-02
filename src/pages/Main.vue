@@ -1,3 +1,11 @@
 <template>
-	<h1>Logging in works!</h1>
+	<page>
+		<template v-slot:content>
+			
+		</template>
+	</page>
 </template>
+
+<script>
+	import Page from './page.vue';
+</script>
