@@ -1,43 +1,39 @@
 <template>
-	<page>
-		<template v-slot:content>
-			<v-form>
-				<h5>Sign Up</h5>
-				<v-text-field
-					label="Username"
-					name="username"
-					v-model="register.username"
-				/>
-				<v-text-field
-					type="password"
-					label="Password"
-					name="password"
-					v-model="register.password"
-				/>
-				<v-btn @click="onRegister">Sign Up</v-btn>
-			</v-form>
-			<v-form>
-				<h5>Log In</h5>
-				<v-text-field
-					label="Username"
-					name="username"
-					v-model="login.username"
-				/>
-				<v-text-field
-					type="password"
-					label="Password"
-					name="password"
-					v-model="login.password"
-				/>
-				<v-btn @click="onLogin">Log In</v-btn>
-			</v-form>
-			
-		</template>
-	</page>
+	<div>
+		<v-form>
+			<h5>Sign Up</h5>
+			<v-text-field
+				label="Username"
+				name="username"
+				v-model="register.username"
+			/>
+			<v-text-field
+				type="password"
+				label="Password"
+				name="password"
+				v-model="register.password"
+			/>
+			<v-btn @click="onRegister">Sign Up</v-btn>
+		</v-form>
+		<v-form>
+			<h5>Log In</h5>
+			<v-text-field
+				label="Username"
+				name="username"
+				v-model="login.username"
+			/>
+			<v-text-field
+				type="password"
+				label="Password"
+				name="password"
+				v-model="login.password"
+			/>
+			<v-btn @click="onLogin">Log In</v-btn>
+		</v-form>
+	</div>
 </template>
 
 <script>
-	import Page from './page.vue';
 	import axios from 'axios';
 	export default {
 		data: function(){
@@ -66,8 +62,8 @@
 							type: 'success',
 							text: 'Registration succesful! Redirecting...'
 						};
-						//Redirect here
-						window.location.replace('/');
+						localStorage.setItem('loggedIn', 'true');
+						this.$router.push('/');
 					}
 					else { //Show error message
 						this.message = {
@@ -84,7 +80,8 @@
 				try {
 					const success = await axios.post('/login', this.login);
 					if (success){
-						window.location.replace('/');
+						localStorage.setItem('loggedIn', 'true');
+						this.$router.push('/');
 					}
 					else { //Show error message
 						this.message = {
@@ -98,8 +95,6 @@
 				}
 			}
 		},
-
-
-		components: {Page}
+		inject: ['setMessage']
 	}
 </script>

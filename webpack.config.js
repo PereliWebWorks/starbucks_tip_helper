@@ -3,11 +3,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
-const pages = ['main', 'login'];
 var entry = {
-  polyfill: '@babel/polyfill'
+  polyfill: '@babel/polyfill',
+  main: path.resolve(__dirname, 'src/main.js')
 };
-pages.forEach(p => entry[p] = path.resolve(__dirname, `src/${p}.js`));
 
 module.exports = {
   entry,
@@ -56,13 +55,7 @@ module.exports = {
   plugins: [
       new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: ['**/*', '!sftp-config.json'] }),
       new VueLoaderPlugin(),
-      ...pages.map(p => {
-        return new HtmlWebpackPlugin({
-          template: path.resolve(__dirname, 'src/index.html'),
-          filename: path.resolve(__dirname, `public/${p}.html`),
-          chunks: [p]
-        });
-      })
+      new HtmlWebpackPlugin({template: path.resolve(__dirname, 'src/index.html')})
   ],
   output: {
     filename: '[name].bundle.js',

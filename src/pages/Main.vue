@@ -1,11 +1,6 @@
 <template>
-	<page>
-		<template v-slot:content>
-			
-		</template>
-	</page>
+	<h1> This is the main page</h1>
 </template>
 
 <script>
-	import Page from './page.vue';
 </script>
