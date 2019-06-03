@@ -45,10 +45,6 @@
 				login: {
 					username: null,
 					password: null
-				},
-				message: {
-					type: null,
-					text: null
 				}
 			}
 		},
@@ -58,18 +54,18 @@
 					const credentials = {username: this.register.username, password: this.register.password};
 					const success = await axios.post('/users', credentials); 
 					if (success) { //If it's succesful, attempt log in
-						this.message = {
+						 this.$emit('message', {
 							type: 'success',
 							text: 'Registration succesful! Redirecting...'
-						};
+						});
 						localStorage.setItem('loggedIn', 'true');
-						this.$router.push('/');
+						this.$router.push('/tips');
 					}
 					else { //Show error message
-						this.message = {
+						 this.$emit('message', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
-						}
+						});
 					}
 				}
 				catch (error){
@@ -78,16 +74,24 @@
 			},
 			async onLogin(e){
 				try {
+					 this.$emit('message', {text: 'Logging in...'});
 					const success = await axios.post('/login', this.login);
 					if (success){
 						localStorage.setItem('loggedIn', 'true');
+						//Get employees
+						 this.$emit('message', {text: 'Downloading data...'});
+						let employees = await axios.get('/employees');
+						if (employees){
+							this.setEmployees(employees);
+						}
+						 this.$emit('message', {text: 'Welcome!', type: 'success'});
 						this.$router.push('/');
 					}
 					else { //Show error message
-						this.message = {
+						 this.$emit('message', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
-						}
+						});
 					}
 				}
 				catch (error){
@@ -95,6 +99,6 @@
 				}
 			}
 		},
-		inject: ['setMessage']
+		inject: ['setEmployees']
 	}
 </script>

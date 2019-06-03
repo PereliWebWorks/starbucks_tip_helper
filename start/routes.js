@@ -24,7 +24,7 @@ Route.resource('users', 'UserController').only(['show', 'destroy']).middleware([
 
 //CRUD for employees
 Route
-	.resource('employees', 'EmployeesController')
+	.resource('employees', 'EmployeeController')
 	.apiOnly()
 	.middleware(['auth']);
 
