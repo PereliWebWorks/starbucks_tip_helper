@@ -74,17 +74,11 @@
 			},
 			async onLogin(e){
 				try {
-					 this.$emit('message', {text: 'Logging in...'});
+					this.$emit('message', {text: 'Logging in...', fade: false});
 					const success = await axios.post('/login', this.login);
 					if (success){
 						localStorage.setItem('loggedIn', 'true');
-						//Get employees
-						 this.$emit('message', {text: 'Downloading data...'});
-						let employees = await axios.get('/employees');
-						if (employees){
-							this.setEmployees(employees);
-						}
-						 this.$emit('message', {text: 'Welcome!', type: 'success'});
+					 	this.$emit('message', {text: 'Welcome!', type: 'success'});
 						this.$router.push('/');
 					}
 					else { //Show error message
@@ -98,7 +92,6 @@
 					console.log('Error ' + error);
 				}
 			}
-		},
-		inject: ['setEmployees']
+		}
 	}
 </script>

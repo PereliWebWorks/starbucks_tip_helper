@@ -3,16 +3,24 @@
 		<v-flex xs12 md6>
 			<v-form ref="newEmployeeForm">
 				<h3>Add an Employee</h3>
-				<v-text-field 
-					v-model="newEmployee.first"
-					label="First Name"
-					clearable
-				/>
-				<v-text-field 
-					v-model="newEmployee.last"
-					label="Last Name"
-					clearable
-				/>
+				<v-layout>	
+					<v-flex md6 xs12>	
+						<v-text-field 
+							v-model="newEmployee.first"
+							label="First Name"
+							clearable
+							required
+						/>
+					</v-flex>
+					<v-flex xs12 md6>
+						<v-text-field 
+							v-model="newEmployee.last"
+							label="Last Name"
+							clearable
+							required
+						/>
+					</v-flex>
+				</v-layout>
 				<v-btn @click="attemptAddEmployee">Add</v-btn>
 			</v-form>
 		</v-flex>
