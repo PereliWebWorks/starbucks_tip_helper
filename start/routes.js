@@ -6,14 +6,14 @@ const Route = use('Route')
 const Helpers = use('Helpers');
 
 //Log in screen
-Route.get('login', ({response}) => {
-	response.download(Helpers.publicPath('login.html'));
-}).middleware(['guest']);
+// Route.get('login', ({response}) => {
+// 	response.download(Helpers.publicPath('login.html'));
+// }).middleware(['guest']);
 
 //Log in
 Route.post('login', 'UserController.login').middleware(['guest']).as('login');
 //Log out
-Route.route('logout', 'UserController.logout').middleware(['auth']);
+Route.post('logout', 'UserController.logout').middleware(['auth']);
 
 
 //Register
@@ -24,11 +24,11 @@ Route.resource('users', 'UserController').only(['show', 'destroy']).middleware([
 
 //CRUD for employees
 Route
-	.resource('employees', 'EmployeesController')
+	.resource('employees', 'EmployeeController')
 	.apiOnly()
 	.middleware(['auth']);
 
 //Main page
 Route.get('/', ({response}) => {
-	response.download(Helpers.publicPath('main.html'));
+	response.download(Helpers.publicPath('app.html'));
 }).middleware(['auth']).as('main');

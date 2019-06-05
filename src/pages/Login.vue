@@ -1,43 +1,39 @@
 <template>
-	<page>
-		<template v-slot:content>
-			<v-form>
-				<h5>Sign Up</h5>
-				<v-text-field
-					label="Username"
-					name="username"
-					v-model="register.username"
-				/>
-				<v-text-field
-					type="password"
-					label="Password"
-					name="password"
-					v-model="register.password"
-				/>
-				<v-btn @click="onRegister">Sign Up</v-btn>
-			</v-form>
-			<v-form>
-				<h5>Log In</h5>
-				<v-text-field
-					label="Username"
-					name="username"
-					v-model="login.username"
-				/>
-				<v-text-field
-					type="password"
-					label="Password"
-					name="password"
-					v-model="login.password"
-				/>
-				<v-btn @click="onLogin">Log In</v-btn>
-			</v-form>
-			
-		</template>
-	</page>
+	<div>
+		<v-form>
+			<h5>Sign Up</h5>
+			<v-text-field
+				label="Username"
+				name="username"
+				v-model="register.username"
+			/>
+			<v-text-field
+				type="password"
+				label="Password"
+				name="password"
+				v-model="register.password"
+			/>
+			<v-btn @click="onRegister">Sign Up</v-btn>
+		</v-form>
+		<v-form>
+			<h5>Log In</h5>
+			<v-text-field
+				label="Username"
+				name="username"
+				v-model="login.username"
+			/>
+			<v-text-field
+				type="password"
+				label="Password"
+				name="password"
+				v-model="login.password"
+			/>
+			<v-btn @click="onLogin">Log In</v-btn>
+		</v-form>
+	</div>
 </template>
 
 <script>
-	import Page from './page.vue';
 	import axios from 'axios';
 	export default {
 		data: function(){
@@ -49,10 +45,6 @@
 				login: {
 					username: null,
 					password: null
-				},
-				message: {
-					type: null,
-					text: null
 				}
 			}
 		},
@@ -62,18 +54,18 @@
 					const credentials = {username: this.register.username, password: this.register.password};
 					const success = await axios.post('/users', credentials); 
 					if (success) { //If it's succesful, attempt log in
-						this.message = {
+						 this.$emit('message', {
 							type: 'success',
 							text: 'Registration succesful! Redirecting...'
-						};
-						//Redirect here
-						window.location.replace('/');
+						});
+						localStorage.setItem('loggedIn', 'true');
+						this.$router.push('/tips');
 					}
 					else { //Show error message
-						this.message = {
+						 this.$emit('message', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
-						}
+						});
 					}
 				}
 				catch (error){
@@ -82,24 +74,24 @@
 			},
 			async onLogin(e){
 				try {
+					// this.$emit('message', {text: 'Logging in...', fade: false});
 					const success = await axios.post('/login', this.login);
 					if (success){
-						window.location.replace('/');
+						localStorage.setItem('loggedIn', 'true');
+					 	this.$emit('message', {text: 'Welcome!', type: 'success'});
+						this.$router.push('/');
 					}
 					else { //Show error message
-						this.message = {
+						 this.$emit('message', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
-						}
+						});
 					}
 				}
 				catch (error){
 					console.log('Error ' + error);
 				}
 			}
-		},
-
-
-		components: {Page}
+		}
 	}
 </script>

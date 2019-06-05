@@ -20,11 +20,12 @@ class UserController {
   async logout({response, auth}) {
     try {
       await auth.logout();
+      response.json(true);
     }
     catch (error){
       console.log(error);
+      response.json(false);
     }
-    response.route('login');
   }
 
   async store({request, response, auth}) {
