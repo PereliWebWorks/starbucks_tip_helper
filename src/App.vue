@@ -1,5 +1,5 @@
 <template>
-	<v-app>
+	<v-app dark>
 		<v-toolbar app>
 			<v-toolbar-title>Tip Helper</v-toolbar-title>
 			<v-spacer></v-spacer>
@@ -11,23 +11,17 @@
 				</template>
 				<v-btn flat to="/donate">Donate</v-btn>
 			</v-toolbar-items>
-			<template v-slot:extension>
-				<v-layout>
-					<v-flex xs12 md6 offset-md3>
-						<v-alert
-							v-model="message.show"
-							:type="message.type"
-							transition="fade-transition"
-							dismissible
-						>
-							{{message.text}}
-						</v-alert>
-					</v-flex>
-				</v-layout>
-			</template>
 		</v-toolbar>
 		<v-content>
 			<v-container fluid grid-list-md>
+				<v-snackbar
+					v-model="message.show"
+					:color="message.type"
+					:top="true"
+					:timeout="message.timeout"
+				>
+					{{message.text}}
+				</v-snackbar>
 				<keep-alive>
 					<router-view 
 						:employees="employees" 
@@ -36,6 +30,13 @@
 				</keep-alive>
 			</v-container>
 		</v-content>
+		<v-footer app height="auto">
+      <v-layout justify-center row wrap>
+        <v-flex py-3 text-xs-center white--text xs12>
+          <strong>By <a href="https://pereliwebworks.com" target="_blank">Drew Pereli</a></strong>
+        </v-flex>
+      </v-layout>
+    </v-footer>
 	</v-app>
 </template>
 
@@ -45,9 +46,10 @@
 		data: function(){
 			return {
 				message: {
-					type: null,
-					text: null,
-					show: false
+					type: 'info',
+					text: '',
+					show: false,
+					timeout: 6000
 				},
 				employees: null
 			}
@@ -57,10 +59,11 @@
 				this.message.text = text; 				
 				this.message.type = type || 'info';
 				this.message.show = true;
-				if (fade){
-					setTimeout(() => {
-						this.message.show = false;
-					}, 3000);
+				if (!fade){
+					this.message.timeout = 0;
+				}
+				else {
+					this.message.timeout = 6000;
 				}
 			},
 			setEmployees(employees){

@@ -74,7 +74,7 @@
 			},
 			async onLogin(e){
 				try {
-					this.$emit('message', {text: 'Logging in...', fade: false});
+					// this.$emit('message', {text: 'Logging in...', fade: false});
 					const success = await axios.post('/login', this.login);
 					if (success){
 						localStorage.setItem('loggedIn', 'true');
