@@ -1,94 +1,91 @@
 <template>
 	<v-layout wrap>
-		<v-flex xs12 md12>
+		<v-flex xs12>
 			<h1>Tips</h1>
 		</v-flex>
-		<template v-if="employeeInfo">	
-			<!-- Tip info -->
-			<v-flex md3 xs12>
-				<v-card>
-					<v-card-text>
-						<div>	
-							<v-text-field
-								v-model="totalTips"
-								label="Total Tips"
-								prefix="$"
-								:rules="numberRules"
-								clearable
-								box
-							/>
-						</div>
-						<div>Total Hours: {{formHasError ? 'Form error' : totalHours}}</div>
-						<div>$/hr: {{rate | toFixed(4)}}</div>
-					</v-card-text>
-				</v-card>
-			</v-flex>
-			<v-flex md9 xs12 pt-0>	
-				<!-- hours -->
-				<v-flex xs12>
-					<v-expansion-panel>
-						<v-expansion-panel-content>
-							<template v-slot:header><v-subheader>Employee Hours</v-subheader></template>
-								<v-card>
-									<v-card-text>	
-										<v-form ref="tipsForm">
-											<v-text-field
-												v-for="employee in employeeInfo"
-												v-model="employee.hours"
-												:label="employee.first_name + ' ' + employee.last_name"
-												:key="employee.id"
-												:rules="numberRules"
-												clearable
-												box
-											/>
-										</v-form>
-									</v-card-text>
-								</v-card>
-						</v-expansion-panel-content>
-					</v-expansion-panel>
-				</v-flex>
-				<!-- Results -->
-				<v-flex xs12>
-					<v-expansion-panel>
-						<v-expansion-panel-content>
-							<template v-slot:header>
-								<v-subheader>Results</v-subheader>
-							</template>
-							<v-card>
-								<v-card-text>
-									<v-data-table
-										:items="tableData"
-										:headers="tableHeaders"
-										:pagination.sync="pagination"
-									>
-										<template v-slot:items="props">
-											<td>{{props.item.first_name}}</td>
-											<td>{{props.item.last_name}}</td>
-											<td>${{props.item.tips | toFixed(2)}}</td>
-											<td>${{props.item.tips_rounded | toFixed(2)}}</td>
-											<td>${{props.item.tips_rounded_down | toFixed(2)}}</td>
-											<td>{{props.item.hours}}</td>
-										</template>
-										<template v-slot:footer>
-											<tr class="font-weight-bold grey lighten-3" id="tips-table-footer">
-												<td colspan="2">Totals:</td>
-												<td>${{totalTips}}</td>
-												<td>${{totalRoundedTips}}</td>
-												<td>${{totalRoundedDownTips}}</td>
-												<td>{{totalHours}}</td>
-											</tr>
-										</template>
-									</v-data-table>
-								</v-card-text>
-							</v-card>
-						</v-expansion-panel-content>
-					</v-expansion-panel>
-				</v-flex>
-			</v-flex>
-		</template>
-		<template v-else>
-			<v-subheader>Downloading employee info...</v-subheader>
-		</template>
+		<v-flex xs12>
+			<v-stepper v-model="currentStep" v-if="employeeInfo">
+				<v-stepper-header>
+					<v-stepper-step editable :complete="currentStep > 1" step="1">Add employee hours</v-stepper-step>
+					<v-divider></v-divider>
+					<v-stepper-step editable :complete="currentStep > 2" step="2">Add tip totals</v-stepper-step>
+					<v-divider></v-divider>
+					<v-stepper-step editable step="3">Get tip data</v-stepper-step>
+				</v-stepper-header>
+				<v-stepper-items>
+					<v-stepper-content step="1">
+						<v-card>
+							<v-card-text>	
+								<v-form ref="tipsForm">
+									<v-text-field
+										v-for="employee in employeeInfo"
+										v-model="employee.hours"
+										:label="employee.first_name + ' ' + employee.last_name"
+										:key="employee.id"
+										:rules="numberRules"
+										clearable
+										box
+									/>
+								</v-form>
+							</v-card-text>
+						</v-card>
+						<v-btn color="primary" @click="currentStep = 2">Continue</v-btn>
+						<v-btn @click="currentStep = 1">Back</v-btn>
+					</v-stepper-content>
+					<v-stepper-content step="2">
+						<v-card>
+							<v-card-text>
+								<div>	
+									<v-text-field
+										v-model="totalTips"
+										label="Total Tips"
+										prefix="$"
+										:rules="numberRules"
+										clearable
+										box
+									/>
+								</div>
+								<div>Total Hours: {{formHasError ? 'Form error' : totalHours}}</div>
+								<div>$/hr: {{rate | toFixed(4)}}</div>
+							</v-card-text>
+						</v-card>
+						<v-btn color="primary" @click="currentStep = 3">Continue</v-btn>
+						<v-btn @click="currentStep = 1">Back</v-btn>
+					</v-stepper-content>
+					<v-stepper-content step="3">
+						<v-card>
+							<v-card-text>
+								<v-data-table
+									:items="tableData"
+									:headers="tableHeaders"
+									:pagination.sync="pagination"
+								>
+									<template v-slot:items="props">
+										<td>{{props.item.first_name}}</td>
+										<td>{{props.item.last_name}}</td>
+										<td>${{props.item.tips | toFixed(2)}}</td>
+										<td>${{props.item.tips_rounded | toFixed(2)}}</td>
+										<td>${{props.item.tips_rounded_down | toFixed(2)}}</td>
+										<td>{{props.item.hours}}</td>
+									</template>
+									<template v-slot:footer>
+										<tr class="font-weight-bold grey lighten-3" id="tips-table-footer">
+											<td colspan="2">Totals:</td>
+											<td>${{totalTips}}</td>
+											<td>${{totalRoundedTips}}</td>
+											<td>${{totalRoundedDownTips}}</td>
+											<td>{{totalHours}}</td>
+										</tr>
+									</template>
+								</v-data-table>
+							</v-card-text>
+						</v-card>
+						<v-btn @click="currentStep = 2">Back</v-btn>
+					</v-stepper-content>
+				</v-stepper-items>
+			</v-stepper>
+			<v-subheader v-else>Downloading employee info...</v-subheader>
+		</v-flex>
 	</v-layout>
 </template>
 
@@ -100,6 +97,7 @@
 				employeeInfo: [],
 				numberRules: [v => !isNaN(v) || 'Please enter a valid number'],
 				totalTips: null,
+				currentStep: 1,
 				tableHeaders: [
 					{text: 'First Name', value: 'first_name'},
 					{text: 'Last Name', value: 'last_name'},

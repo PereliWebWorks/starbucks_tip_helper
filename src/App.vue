@@ -1,5 +1,5 @@
 <template>
-	<v-app dark>
+	<v-app>
 		<v-toolbar app>
 			<v-toolbar-title>Tip Helper</v-toolbar-title>
 			<v-spacer></v-spacer>

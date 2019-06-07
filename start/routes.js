@@ -11,7 +11,7 @@ const Helpers = use('Helpers');
 // }).middleware(['guest']);
 
 //Log in
-Route.post('login', 'UserController.login').middleware(['guest']).as('login');
+Route.post('login', 'UserController.login').as('login');
 //Log out
 Route.post('logout', 'UserController.logout').middleware(['auth']);
 
