@@ -85,7 +85,7 @@
 				const success = await axios.post('/logout');
 				if (success){
 					localStorage.setItem('loggedIn', 'false');
-					this.$store.commit('removeEmployees');
+					this.$store.commit('deleteAllEmployees');
 					this.$router.push('/login');
 				}
 			},

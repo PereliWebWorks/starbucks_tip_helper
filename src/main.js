@@ -42,11 +42,16 @@ const store = new Vuex.Store({
 		addEmployee(state, e){
 			state.employees.push(e);
 		},
-		addAllEmployees(state, employees){
-			state.employees = employees;
+		updateEmployee(state, params){
+			let employee = state.employees.find(e => e.id === params.id);
+			if (!employee) throw new Error('Could not find employee with id ' + params.id);
+			Object.assign(employee, params);
 		},
 		deleteEmployee(state, id){
 			state.employees = state.employees.filter(emp => emp.id !== id);
+		},
+		addAllEmployees(state, employees){
+			state.employees = employees;
 		},
 		deleteAllEmployees(state){
 			state.employees = false;
@@ -57,7 +62,7 @@ const store = new Vuex.Store({
 			try{
 				const res = await axios.get('/employees');
 				if (res && res.data){
-					commit('addAllEmployees', res.data);
+					commit('addAllEmployees', res.data.map(e => {e.hours = 0; return e;}));
 				}
 			}
 			catch (err){
@@ -68,7 +73,7 @@ const store = new Vuex.Store({
 	}
 });
 
-store.dispatch('downloadEmployees');
+if (localStorage.getItem('loggedIn') === 'true') store.dispatch('downloadEmployees');
 
 const router = new Router({routes});
 
