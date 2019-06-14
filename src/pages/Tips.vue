@@ -16,7 +16,7 @@
 					<v-stepper-content step="1">
 						<v-card>
 							<v-card-text>	
-								<v-form ref="tipsForm">
+								<v-form ref="tipsForm" v-if="employees.length > 0">
 									<v-text-field
 										v-for="employee in employeeInfo"
 										v-model="employee.hours"
@@ -27,6 +27,9 @@
 										box
 									/>
 								</v-form>
+								<v-subheader v-else>
+									Go to the <v-btn to="/employees">employees page</v-btn> to add employees!
+								</v-subheader>
 							</v-card-text>
 						</v-card>
 						<v-btn color="primary" @click="currentStep = 2">Continue</v-btn>
@@ -35,18 +38,28 @@
 					<v-stepper-content step="2">
 						<v-card>
 							<v-card-text>
-								<div>	
-									<v-text-field
-										v-model="totalTips"
-										label="Total Tips"
-										prefix="$"
-										:rules="numberRules"
-										clearable
-										box
-									/>
-								</div>
-								<div>Total Hours: {{formHasError ? 'Form error' : totalHours}}</div>
-								<div>$/hr: {{rate | toFixed(4)}}</div>
+								<v-container grid-list-xl>
+									<v-layout wrap>
+										<v-flex xs12 md6>	
+											<v-text-field
+												v-model="totalTips"
+												label="Total Tips"
+												prefix="$"
+												:rules="numberRules"
+												clearable
+												box
+											/>
+										</v-flex>
+										<v-flex xs12 md6>
+											<v-card dark elevation="10">
+												<v-card-text>
+													<div class="subheader">Total Hours: {{formHasError ? 'Form error' : totalHours}}</div>
+													<div class="subheader">Tip Rate ($s/hr): {{rate | toFixed(3)}}</div>
+												</v-card-text>
+											</v-card>
+										</v-flex>
+									</v-layout>
+								</v-container>
 							</v-card-text>
 						</v-card>
 						<v-btn color="primary" @click="currentStep = 3">Continue</v-btn>
@@ -84,17 +97,16 @@
 					</v-stepper-content>
 				</v-stepper-items>
 			</v-stepper>
-			<v-subheader v-else>Downloading employee info...</v-subheader>
+			<v-progress-linear v-else indeterminate />
 		</v-flex>
 	</v-layout>
 </template>
 
 <script>
 	export default {
-		props: ['employees'],
 		data: function(){
 			return {
-				employeeInfo: [],
+				employeeInfo: false,
 				numberRules: [v => !isNaN(v) || 'Please enter a valid number'],
 				totalTips: null,
 				currentStep: 1,
@@ -114,8 +126,11 @@
 			}
 		},
 		computed: {
+			employees: function(){
+				return this.$store.state.employees;
+			},
 			formHasError: function(){
-				if (!this.isMounted) return false;
+				if (!this.isMounted || !this.$refs.tipsForm) return false;
 				return !this.$refs.tipsForm.validate();
 			},
 			employeesWithHours: function(){
@@ -164,11 +179,14 @@
 		watch: {
 			employees: function(newEmployees){
 				if (!newEmployees) return;
-				this.employeeInfo = newEmployees.map(e => {
+				let newEmployeeInfo = newEmployees.map(e => {
 					let newEmployee = {};
 					Object.assign(newEmployee, e);
 					//See if the employee already has corresponding info in the existing array
-					let existingInfo = this.employeeInfo.find(ex => ex.id === e.id);
+					let existingInfo = false;
+					if (this.employeeInfo !== false) {
+						existingInfo = this.employeeInfo.find(ex => ex.id === e.id);
+					}
 					if (existingInfo){
 						Object.assign(newEmployee, existingInfo);
 					}
@@ -178,6 +196,7 @@
 					}
 					return newEmployee;
 				});
+				this.employeeInfo = newEmployeeInfo;
 			}
 		},
 		filters: {
@@ -186,14 +205,8 @@
 				return Number(value).toFixed(digits);
 			}
 		},
-		async created(){
-			if (!this.employees) {
-				this.downloadEmployees();
-			}
-		},
 		mounted(){
 			this.isMounted = true;
-		},
-		inject: ['downloadEmployees']
+		}
 	}
 </script>

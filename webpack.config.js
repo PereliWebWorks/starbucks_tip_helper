@@ -57,6 +57,13 @@ module.exports = {
       new VueLoaderPlugin(),
       new HtmlWebpackPlugin({template: path.resolve(__dirname, 'src/index.html')})
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'), 
+      Components: path.resolve(__dirname, 'src/components'),
+      Pages: path.resolve(__dirname, 'src/pages')
+    }
+  },
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'public'),

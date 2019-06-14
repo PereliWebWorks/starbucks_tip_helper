@@ -1,28 +1,7 @@
 <template>
 	<v-layout>
 		<v-flex xs12 md6>
-			<v-form ref="newEmployeeForm">
-				<h3>Add an Employee</h3>
-				<v-layout>	
-					<v-flex md6 xs12>	
-						<v-text-field 
-							v-model="newEmployee.first"
-							label="First Name"
-							clearable
-							required
-						/>
-					</v-flex>
-					<v-flex xs12 md6>
-						<v-text-field 
-							v-model="newEmployee.last"
-							label="Last Name"
-							clearable
-							required
-						/>
-					</v-flex>
-				</v-layout>
-				<v-btn @click="attemptAddEmployee">Add</v-btn>
-			</v-form>
+			<new-employee-form />
 		</v-flex>
 		<v-flex xs12 md4 offset-md2>
 			<v-card>
@@ -43,7 +22,7 @@
 						</v-list-tile>
 					</template>
 					<template v-else>
-						<v-subheader>Loading employee data...</v-subheader>
+						<v-progress-linear indeterminate />
 					</template>
 				</v-list>
 			</v-card>
@@ -53,40 +32,21 @@
 
 <script>
 	import axios from 'axios';
+	import NewEmployeeForm from 'Components/NewEmployeeForm.vue';
 	export default {
-		props: ['employees'],
-		data: function(){
-			return {
-				newEmployee: {
-					first: null,
-					last: null
-				}
+		computed: {
+			employees: function(){
+				return this.$store.state.employees;
 			}
 		},
 		methods: {
-			async attemptAddEmployee(){
-				try {	
-					 this.$emit('message', {text: 'Adding employee...'});
-					const {first, last} = this.newEmployee;
-					const data = {first_name: first, last_name: last};
-					const employee = await axios.post('/employees', data);
-					if (employee && employee.data){
-						 this.$emit('message', {text: 'Employee added!', type: 'success'});
-						this.addEmployee(employee.data);
-						this.$refs.newEmployeeForm.reset();
-					}
-				}
-				catch (err){
-					console.log(error);
-				}
-			},
 			async attemptDeleteEmployee(id){
 				try {
-					 this.$emit('message', {text: 'Deleting employee...'});
+					this.$store.commit('setProgressMessage');
 					const success = await axios.delete(`/employees/${id}`);
 					if (success && success.data){
-						 this.$emit('message', {text: 'Employee deleted', type: 'success'});
-						this.deleteEmployee(id);
+						this.$store.commit('deleteEmployee', id);
+					 	this.$store.commit('setMessage', {text: 'Employee deleted', type: 'success'});
 					}
 				}
 				catch(err){
@@ -94,9 +54,6 @@
 				}
 			}
 		},
-		created(){
-			if (!this.employees) this.downloadEmployees();
-		},
-		inject: ['addEmployee', 'downloadEmployees', 'deleteEmployee'],
+		components: {NewEmployeeForm}
 	}
 </script>

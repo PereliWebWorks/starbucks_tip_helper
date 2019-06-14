@@ -1,6 +1,6 @@
-import Tips from './pages/Tips.vue';
-import Login from './pages/Login.vue';
-import Employees from './pages/Employees.vue';
+import Tips from 'Pages/Tips.vue';
+import Login from 'Pages/Login.vue';
+import Employees from 'Pages/Employees.vue';
 
 const routes = [
 	{path: '/tips', component: Tips, meta: {requiresAuth: true}},

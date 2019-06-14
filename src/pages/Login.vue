@@ -51,10 +51,11 @@
 		methods: {
 			async onRegister(e){
 				try {
+					this.$store.commit('setProgressMessage');
 					const credentials = {username: this.register.username, password: this.register.password};
 					const success = await axios.post('/users', credentials); 
 					if (success) { //If it's succesful, attempt log in
-						 this.$emit('message', {
+						 this.$store.commit('setMessage', {
 							type: 'success',
 							text: 'Registration succesful! Redirecting...'
 						});
@@ -62,7 +63,7 @@
 						this.$router.push('/tips');
 					}
 					else { //Show error message
-						 this.$emit('message', {
+						 this.$store.commit('setMessage', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
 						});
@@ -74,15 +75,16 @@
 			},
 			async onLogin(e){
 				try {
-					// this.$emit('message', {text: 'Logging in...', fade: false});
+					this.$store.commit('setProgressMessage');
 					const success = await axios.post('/login', this.login);
 					if (success){
 						localStorage.setItem('loggedIn', 'true');
-					 	this.$emit('message', {text: 'Welcome!', type: 'success'});
+					 	this.$store.dispatch('downloadEmployees');
+					 	this.$store.commit('setMessage', {text: 'Welcome!', type: 'success'});
 						this.$router.push('/');
 					}
 					else { //Show error message
-						 this.$emit('message', {
+						 this.$store.commit('setMessage', {
 							type: 'error',
 							text: 'There was an error. Please try again later.'
 						});
