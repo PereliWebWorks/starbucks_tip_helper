@@ -60,6 +60,7 @@
 							text: 'Registration succesful! Redirecting...'
 						});
 						localStorage.setItem('loggedIn', 'true');
+						this.$store.dispatch('downloadEmployees');
 						this.$router.push('/tips');
 					}
 					else { //Show error message
@@ -91,7 +92,7 @@
 					}
 				}
 				catch (error){
-					console.log('Error ' + error);
+					console.log('Error: ' + error);
 				}
 			}
 		}

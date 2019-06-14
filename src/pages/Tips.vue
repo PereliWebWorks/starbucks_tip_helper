@@ -4,7 +4,7 @@
 			<h1>Tips</h1>
 		</v-flex>
 		<v-flex xs12>
-			<v-stepper v-model="currentStep" v-if="employeeInfo">
+			<v-stepper v-model="currentStep" v-if="employees">
 				<v-stepper-header>
 					<v-stepper-step editable :complete="currentStep > 1" step="1">Add employee hours</v-stepper-step>
 					<v-divider></v-divider>
@@ -18,13 +18,14 @@
 							<v-card-text>	
 								<v-form ref="tipsForm" v-if="employees.length > 0">
 									<v-text-field
-										v-for="employee in employeeInfo"
-										v-model="employee.hours"
+										v-for="employee in employees"
+										@input="v => setEmployeeHours(employee.id, v)"
 										:label="employee.first_name + ' ' + employee.last_name"
 										:key="employee.id"
 										:rules="numberRules"
 										clearable
 										box
+										:value="null"
 									/>
 								</v-form>
 								<v-subheader v-else>
@@ -82,7 +83,7 @@
 										<td>{{props.item.hours}}</td>
 									</template>
 									<template v-slot:footer>
-										<tr class="font-weight-bold grey lighten-3" id="tips-table-footer">
+										<tr class="font-weight-bold grey lighten-1" id="tips-table-footer">
 											<td colspan="2">Totals:</td>
 											<td>${{totalTips}}</td>
 											<td>${{totalRoundedTips}}</td>
@@ -106,7 +107,6 @@
 	export default {
 		data: function(){
 			return {
-				employeeInfo: false,
 				numberRules: [v => !isNaN(v) || 'Please enter a valid number'],
 				totalTips: null,
 				currentStep: 1,
@@ -134,14 +134,7 @@
 				return !this.$refs.tipsForm.validate();
 			},
 			employeesWithHours: function(){
-				let employees = [];
-				for (var i in this.employeeInfo){
-					let e = this.employeeInfo[i];
-					if (isNaN(e.hours)) continue;
-					if (!e.hours) continue;
-					employees.push(e);
-				}
-				return this.employeeInfo.filter(e => e.hours);
+				return this.employees.filter(e => e.hours);
 			},
 			totalHours: function(){ 
 				return this.employeesWithHours.reduce((a,e) => a + Number(e.hours), 0);
@@ -176,27 +169,10 @@
 				return this.tableData.reduce((a, e) => a + e.tips_rounded_down, 0);
 			}
 		},
-		watch: {
-			employees: function(newEmployees){
-				if (!newEmployees) return;
-				let newEmployeeInfo = newEmployees.map(e => {
-					let newEmployee = {};
-					Object.assign(newEmployee, e);
-					//See if the employee already has corresponding info in the existing array
-					let existingInfo = false;
-					if (this.employeeInfo !== false) {
-						existingInfo = this.employeeInfo.find(ex => ex.id === e.id);
-					}
-					if (existingInfo){
-						Object.assign(newEmployee, existingInfo);
-					}
-					else {
-						newEmployee.hours = null;
-						newEmployee.tips = null;
-					}
-					return newEmployee;
-				});
-				this.employeeInfo = newEmployeeInfo;
+		methods: {
+			setEmployeeHours(id, hours){
+				if (this.formHasError) return;
+				this.$store.commit('updateEmployee', {id, hours});
 			}
 		},
 		filters: {
