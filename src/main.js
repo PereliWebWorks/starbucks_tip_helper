@@ -61,9 +61,7 @@ const store = new Vuex.Store({
 		async downloadEmployees({commit}){
 			try{
 				const res = await axios.get('/employees');
-				if (res && res.data){
-					commit('addAllEmployees', res.data.map(e => {e.hours = 0; return e;}));
-				}
+				commit('addAllEmployees', res.data.map(e => {e.hours = 0; return e;}));
 			}
 			catch (err){
 				console.log(err);

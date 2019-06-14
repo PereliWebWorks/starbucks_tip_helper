@@ -6,7 +6,7 @@
 					v-model="newEmployee.first"
 					label="First Name"
 					clearable
-					required
+					:rules="nameRules"
 				/>
 			</v-flex>
 			<v-flex xs12 md6>
@@ -14,7 +14,7 @@
 					v-model="newEmployee.last"
 					label="Last Name"
 					clearable
-					required
+					:rules="nameRules"
 				/>
 			</v-flex>
 		<v-btn @click="attemptAddEmployee">Add</v-btn>
@@ -27,25 +27,25 @@
 		data: function(){
 			return {
 				newEmployee: {
-					first: null,
-					last: null
-				}
+					first: '',
+					last: ''
+				},
+				nameRules: [v => !!v || 'This field is required']
 			}
 		},
 		methods: {
 			async attemptAddEmployee(){
-				try {	
-					 this.$store.commit('setProgressMessage');
+				try {
+					if (!this.$refs.newEmployeeForm.validate()) return;
+					this.$store.commit('setProgressMessage');
 					const {first, last} = this.newEmployee;
 					const data = {first_name: first, last_name: last};
-					const employee = await axios.post('/employees', data);
-					if (employee && employee.data){
-						this.$store.commit('setMessage', {text: 'Employee added!', type: 'success'});
-						this.$store.commit('addEmployee', employee.data);
-						this.$refs.newEmployeeForm.reset();
-					}
+					const response = await axios.post('/employees', data);
+					this.$store.commit('setMessage', {text: 'Employee added!', type: 'success'});
+					this.$store.commit('addEmployee', response.data);
+					this.$refs.newEmployeeForm.reset();
 				}
-				catch (err){
+				catch (error){
 					console.log(error);
 				}
 			}

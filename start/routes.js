@@ -13,7 +13,7 @@ const Helpers = use('Helpers');
 //Log in
 Route.post('login', 'UserController.login').as('login');
 //Log out
-Route.post('logout', 'UserController.logout').middleware(['auth']);
+Route.post('logout', 'UserController.logout');
 
 
 //Register

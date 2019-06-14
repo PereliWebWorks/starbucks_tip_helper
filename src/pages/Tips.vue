@@ -54,8 +54,14 @@
 										<v-flex xs12 md6>
 											<v-card dark elevation="10">
 												<v-card-text>
-													<div class="subheader">Total Hours: {{formHasError ? 'Form error' : totalHours}}</div>
-													<div class="subheader">Tip Rate ($s/hr): {{rate | toFixed(3)}}</div>
+													<v-subheader>Total Hours: {{formHasError ? 'Form error' : totalHours}}</v-subheader>
+													<v-divider />
+													<v-subheader class="success white--text">
+														Tip Rate: 
+														<template v-if="rate">
+															${{rate | toFixed(3)}}/hr
+														</template>
+													</v-subheader>
 												</v-card-text>
 											</v-card>
 										</v-flex>
@@ -83,7 +89,7 @@
 										<td>{{props.item.hours}}</td>
 									</template>
 									<template v-slot:footer>
-										<tr class="font-weight-bold grey lighten-1" id="tips-table-footer">
+										<tr class="font-weight-bold success" id="tips-table-footer">
 											<td colspan="2">Totals:</td>
 											<td>${{totalTips}}</td>
 											<td>${{totalRoundedTips}}</td>

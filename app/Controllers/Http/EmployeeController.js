@@ -1,10 +1,17 @@
 'use strict'
 const capitalize = require('just-capitalize');
 const Employee = use('App/Models/Employee');
+const { validate } = use('Validator');
 
 class EmployeeController {
 	async store({request, response, auth}){
 		try {
+			const rules = {
+			  first_name: 'required',
+			  last_name: 'required'
+			};
+			const validation = await validate(request.all(), rules);
+			if (validation.fails()) return response.conflict({});
 			const user = await auth.getUser();
 			const {first_name, last_name} = request.all();
 			const employee = await Employee.create({
@@ -12,11 +19,11 @@ class EmployeeController {
 				first_name: capitalize(first_name),
 				last_name: capitalize(last_name)
 			});
-			response.json(employee);
+			response.created(employee);
 		}
 		catch (err){
 			console.log(err);
-			response.json(false);
+			response.internalServerError({});
 		}
 	}
 
@@ -24,11 +31,11 @@ class EmployeeController {
 		try {
 			const user = await auth.getUser();
 			const employees = await user.employees().fetch();
-			response.json(employees);
+			response.ok(employees);
 		}
 		catch (error){
 			console.log(err);
-			response.json(false);
+			response.internalServerError({});
 		}
 	}
 
@@ -36,13 +43,13 @@ class EmployeeController {
 		try{
 			const user = await auth.getUser();
 			const employee = await Employee.find(params.id);
-			if (employee.user_id !== user.id) throw new Error('Employee does not belong to user');
+			if (employee.user_id !== user.id) return response.forbidden({});
 			await employee.delete();
-			response.json(true);
+			response.ok({});
 		}
 		catch(err){
 			console.log(err);
-			response.json(false);
+			response.internalServerError({});
 		}
 	}
 }

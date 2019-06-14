@@ -53,46 +53,45 @@
 				try {
 					this.$store.commit('setProgressMessage');
 					const credentials = {username: this.register.username, password: this.register.password};
-					const success = await axios.post('/users', credentials); 
-					if (success) { //If it's succesful, attempt log in
-						 this.$store.commit('setMessage', {
-							type: 'success',
-							text: 'Registration succesful! Redirecting...'
-						});
-						localStorage.setItem('loggedIn', 'true');
-						this.$store.dispatch('downloadEmployees');
-						this.$router.push('/tips');
-					}
-					else { //Show error message
-						 this.$store.commit('setMessage', {
-							type: 'error',
-							text: 'There was an error. Please try again later.'
-						});
-					}
+					await axios.post('/users', credentials); 
+					this.$store.commit('setMessage', {
+						type: 'success',
+						text: 'Registration succesful! Redirecting...'
+					});
+					localStorage.setItem('loggedIn', 'true');
+					this.$store.dispatch('downloadEmployees');
+					this.$router.push('/tips');
 				}
 				catch (error){
-					console.log('Error ' + error);
+					let text = 'There was an error. Please try again later.';
+					let type = 'error';
+					if (error.response){
+						if (error.response.status === 409){
+							text = 'That username is already being used.';
+							type = 'warning';
+						}
+					}
+					this.$store.commit('setMessage', {type, text});
 				}
 			},
 			async onLogin(e){
 				try {
 					this.$store.commit('setProgressMessage');
-					const success = await axios.post('/login', this.login);
-					if (success){
-						localStorage.setItem('loggedIn', 'true');
-					 	this.$store.dispatch('downloadEmployees');
-					 	this.$store.commit('setMessage', {text: 'Welcome!', type: 'success'});
-						this.$router.push('/');
-					}
-					else { //Show error message
-						 this.$store.commit('setMessage', {
-							type: 'error',
-							text: 'There was an error. Please try again later.'
-						});
-					}
+					await axios.post('/login', this.login);
+					localStorage.setItem('loggedIn', 'true');
+				 	this.$store.dispatch('downloadEmployees');
+				 	this.$store.commit('setMessage', {text: 'Welcome!', type: 'success'});
+					this.$router.push('/');
 				}
 				catch (error){
-					console.log('Error: ' + error);
+					let text = 'There was an error. Please try again later.';
+					let type = 'error';
+					if (error.response){
+						if (error.response.status === 401){
+							text = 'Invalid username or password.';
+						}
+					}
+					this.$store.commit('setMessage', {type, text});
 				}
 			}
 		}

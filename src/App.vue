@@ -82,11 +82,15 @@
 		},
 		methods: {
 			async logout(){
-				const success = await axios.post('/logout');
-				if (success){
+				try {
+					await axios.post('/logout');
 					localStorage.setItem('loggedIn', 'false');
 					this.$store.commit('deleteAllEmployees');
 					this.$router.push('/login');
+				}
+				catch (error){
+					console.log(error);
+					this.$store.commit('setMessage', {type: 'error', text: 'Something went wrong...'});
 				}
 			},
 			loggedIn(){

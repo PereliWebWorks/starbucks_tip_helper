@@ -43,11 +43,9 @@
 			async attemptDeleteEmployee(id){
 				try {
 					this.$store.commit('setProgressMessage');
-					const success = await axios.delete(`/employees/${id}`);
-					if (success && success.data){
-						this.$store.commit('deleteEmployee', id);
-					 	this.$store.commit('setMessage', {text: 'Employee deleted', type: 'success'});
-					}
+					await axios.delete(`/employees/${id}`);
+					this.$store.commit('deleteEmployee', id);
+				 	this.$store.commit('setMessage', {text: 'Employee deleted', type: 'success'});
 				}
 				catch(err){
 					console.log(err);
