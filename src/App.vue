@@ -56,9 +56,12 @@
 			</v-container>
 		</v-content>
 		<v-footer app height="auto">
-      <v-layout justify-center row wrap>
-        <v-flex py-3 text-xs-center white--text xs12>
+      <v-layout pa-3 justify-center align-content-space-between row wrap>  
+        <v-flex xs12 md6>
           <strong>By <a href="https://pereliwebworks.com" target="_blank">Drew Pereli</a></strong>
+        </v-flex>
+        <v-flex text-xs-right xs12 md6>
+          <strong><a href="https://github.com/PereliWebWorks/starbucks_tip_helper" target="_blank">Source Code</a></strong>
         </v-flex>
       </v-layout>
     </v-footer>
