@@ -1,12 +1,12 @@
 <template>
-	<v-layout wrap>
+	<v-layout wrap row>
 		<v-flex xs12>
 			<h1>Tips</h1>
 		</v-flex>
 		<v-flex xs12>
-			<v-stepper v-model="currentStep" v-if="employees">
+			<v-stepper v-model="currentStep" v-if="employees" non-linear>
 				<v-stepper-header>
-					<v-stepper-step editable :complete="currentStep > 1" step="1">Add employee hours</v-stepper-step>
+					<v-stepper-step editable :complete="currentStep > 1" :rules="[() => !formHasError()]" step="1">Add employee hours</v-stepper-step>
 					<v-divider></v-divider>
 					<v-stepper-step editable :complete="currentStep > 2" step="2">Add tip totals</v-stepper-step>
 					<v-divider></v-divider>
@@ -54,7 +54,7 @@
 										<v-flex xs12 md6>
 											<v-card dark elevation="10">
 												<v-card-text>
-													<v-subheader>Total Hours: {{formHasError ? 'Form error' : totalHours}}</v-subheader>
+													<v-subheader>Total Hours: {{formHasError() ? 'Form error' : totalHours}}</v-subheader>
 													<v-divider />
 													<v-subheader class="success white--text">
 														Tip Rate: 
@@ -89,9 +89,9 @@
 										<td>{{props.item.hours}}</td>
 									</template>
 									<template v-slot:footer>
-										<tr class="font-weight-bold success" id="tips-table-footer">
+										<tr class="font-weight-bold" id="tips-table-footer">
 											<td colspan="2">Totals:</td>
-											<td>${{totalTips}}</td>
+											<td>${{totalTips || '0'}}</td>
 											<td>${{totalRoundedTips}}</td>
 											<td>${{totalRoundedDownTips}}</td>
 											<td>{{totalHours}}</td>
@@ -135,10 +135,6 @@
 			employees: function(){
 				return this.$store.state.employees;
 			},
-			formHasError: function(){
-				if (!this.isMounted || !this.$refs.tipsForm) return false;
-				return !this.$refs.tipsForm.validate();
-			},
 			employeesWithHours: function(){
 				return this.employees.filter(e => e.hours);
 			},
@@ -146,14 +142,14 @@
 				return this.employeesWithHours.reduce((a,e) => a + Number(e.hours), 0);
 			},
 			rate: function(){
-				if (!isNaN(this.totalHours) && !isNaN(this.totalTips) && this.totalHours !== 0 && !this.formHasError){
+				if (!isNaN(this.totalHours) && !isNaN(this.totalTips) && this.totalHours !== 0 && !this.formHasError()){
 					let rate = this.totalTips / this.totalHours;
 					return rate;
 				}
 				return null;
 			},
 			tableData: function(){
-				if (this.formHasError) return;
+				if (this.formHasError()) return;
 				const rate = this.rate;
 				if (!rate) return [];
 				let employees = this.employeesWithHours;
@@ -177,9 +173,13 @@
 		},
 		methods: {
 			setEmployeeHours(id, hours){
-				if (this.formHasError) return;
+				if (this.formHasError()) return;
 				this.$store.commit('updateEmployee', {id, hours});
-			}
+			},
+			formHasError: function(){
+				if (!this.isMounted || !this.$refs.tipsForm) return null;
+				return !this.$refs.tipsForm.validate();
+			},
 		},
 		filters: {
 			toFixed: function(value, digits){
@@ -192,3 +192,9 @@
 		}
 	}
 </script>
+
+<style scoped>
+#tips-table-footer{
+  border-top: 1px solid black;
+}
+</style>

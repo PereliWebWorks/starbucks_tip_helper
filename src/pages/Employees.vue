@@ -1,5 +1,5 @@
 <template>
-	<v-layout>
+	<v-layout wrap>
 		<v-flex xs12 md6>
 			<new-employee-form />
 		</v-flex>

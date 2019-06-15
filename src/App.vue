@@ -33,10 +33,11 @@
 					<router-view></router-view>
 				</keep-alive>
 				<div class="text-xs-center">
-					<v-dialog v-model="donateModalOpen" width="500">
+					<v-dialog v-model="donateModalOpen" width="350">
 						<v-card>
 							<v-card-title primary-title class="headline">Help me pay for the server!</v-card-title>
-							<v-card-text>
+							<v-divider />
+							<v-card-text class="text-xs-center">
 								<v-form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 									<input type="hidden" name="cmd" value="_donations" />
 									<input type="hidden" name="business" value="CSTKGJFRDZ9E6" />
