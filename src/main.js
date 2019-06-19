@@ -40,6 +40,7 @@ const store = new Vuex.Store({
 			state.message.show = false;
 		},
 		addEmployee(state, e){
+			e.hours = 0;
 			state.employees.push(e);
 		},
 		updateEmployee(state, params){
@@ -51,7 +52,7 @@ const store = new Vuex.Store({
 			state.employees = state.employees.filter(emp => emp.id !== id);
 		},
 		addAllEmployees(state, employees){
-			state.employees = employees;
+			state.employees = employees.map(e => {e.hours = 0; return e;});
 		},
 		deleteAllEmployees(state){
 			state.employees = false;
@@ -61,7 +62,7 @@ const store = new Vuex.Store({
 		async downloadEmployees({commit}){
 			try{
 				const res = await axios.get('/employees');
-				commit('addAllEmployees', res.data.map(e => {e.hours = 0; return e;}));
+				commit('addAllEmployees', res.data);
 			}
 			catch (err){
 				console.log(err);

@@ -52,6 +52,11 @@
 				}
 			}
 		},
+		beforeRouteEnter (to, from, next) {
+		  next(() => {
+		  	document.getElementById('first-name-field').focus();
+		  });
+		},
 		components: {NewEmployeeForm}
 	}
 </script>

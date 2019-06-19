@@ -1,7 +1,7 @@
 <template>
 	<v-app>
 		<v-toolbar app>
-			<v-toolbar-title><v-btn depressed flat to="/tips" :active-class="null">Tip Helper</v-btn></v-toolbar-title>
+			<v-toolbar-title><v-btn depressed flat to="/tips" :active-class="null">Tips Helper</v-btn></v-toolbar-title>
 			<v-spacer></v-spacer>
 			<v-toolbar-items class="hidden-sm-and-down">	
 				<template v-if="loggedIn()">	

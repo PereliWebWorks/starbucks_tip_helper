@@ -1,5 +1,5 @@
 <template>
-	<v-form ref="newEmployeeForm" @keyup.enter="attemptAddEmployee">
+	<v-form ref="newEmployeeForm" @keyup.native.enter="attemptAddEmployee" lazy-validation>
 		<h3>Add an Employee</h3>	
 			<v-flex md6 xs12>	
 				<v-text-field 
@@ -7,6 +7,7 @@
 					label="First Name"
 					clearable
 					:rules="nameRules"
+					id="first-name-field"
 				/>
 			</v-flex>
 			<v-flex xs12 md6>
@@ -44,6 +45,7 @@
 					this.$store.commit('setMessage', {text: 'Employee added!', type: 'success'});
 					this.$store.commit('addEmployee', response.data);
 					this.$refs.newEmployeeForm.reset();
+					document.getElementById('first-name-field').focus();
 				}
 				catch (error){
 					console.log(error);

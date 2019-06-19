@@ -15,33 +15,36 @@
 				<v-stepper-items>
 					<v-stepper-content step="1">
 						<v-card>
-							<v-card-text>	
-								<v-form ref="tipsForm" v-if="employees.length > 0">
-									<v-text-field
-										v-for="employee in employees"
-										@input="v => setEmployeeHours(employee.id, v)"
-										:label="employee.first_name + ' ' + employee.last_name"
-										:key="employee.id"
-										:rules="numberRules"
-										clearable
-										box
-										:value="null"
-									/>
-								</v-form>
-								<v-subheader v-else>
-									Go to the <v-btn to="/employees">employees page</v-btn> to add employees!
-								</v-subheader>
+							<v-card-text>
+								<v-flex xs12 sm6 offset-md3 align-self-center>
+									<v-form ref="tipsForm" v-if="employees.length > 0">
+										<v-alert class="mb-4" :value="true" type="info">For each employee, enter how many hours they worked during the tip period.</v-alert>
+										<v-text-field
+											v-for="employee in employees"
+											@input="v => setEmployeeHours(employee.id, v)"
+											:label="employee.first_name + ' ' + employee.last_name"
+											:key="employee.id"
+											:rules="numberRules"
+											clearable
+											box
+											:value="null"
+											suffix="hours"
+										/>
+									</v-form>
+									<v-alert v-else :value="true" type="warning">
+										Start by going to the <v-btn to="/employees">employees page</v-btn> to add employees!
+									</v-alert>
+								</v-flex>
 							</v-card-text>
 						</v-card>
 						<v-btn color="primary" @click="currentStep = 2">Continue</v-btn>
-						<v-btn @click="currentStep = 1">Back</v-btn>
 					</v-stepper-content>
 					<v-stepper-content step="2">
 						<v-card>
 							<v-card-text>
 								<v-container grid-list-xl>
 									<v-layout wrap>
-										<v-flex xs12 md6>	
+										<v-flex xs12 md6>
 											<v-text-field
 												v-model="totalTips"
 												label="Total Tips"
