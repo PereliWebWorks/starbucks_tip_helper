@@ -16,7 +16,7 @@
 					<v-stepper-content step="1">
 						<v-card>
 							<v-card-text>
-								<v-flex xs12 sm6 offset-md3 align-self-center>
+								<v-flex xs12 md6 offset-md3 align-self-center>
 									<v-form ref="tipsForm" v-if="employees.length > 0">
 										<v-alert class="mb-4" :value="true" type="info">For each employee, enter how many hours they worked during the tip period.</v-alert>
 										<v-text-field
