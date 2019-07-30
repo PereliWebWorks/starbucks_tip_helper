@@ -136,7 +136,15 @@
 		},
 		computed: {
 			employees: function(){
-				return this.$store.state.employees;
+				const e = this.$store.state.employees;
+				if (!e) return e;
+				return e.sort((a, b) => {
+					const lA = a.last_name.toLowerCase();
+					const lB = b.last_name.toLowerCase();
+					if (lA < lB) return -1;
+					else if (lB < lA) return 1;
+					else return 0;
+				});
 			},
 			employeesWithHours: function(){
 				return this.employees.filter(e => e.hours);
